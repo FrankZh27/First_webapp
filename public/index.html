@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html ng-app="mittens">                  <!--The first step: initialize the angular-->
+<head>
+	<title>Mittens</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript">
+		var app = angular.module('mittens', []); 
+
+		app.controller('MittensCtrl', function($scope, $http) {
+
+			$scope.submitnewGreeting = function() {
+				$http.post('/greetings',{newGreeting: $scope.newGreeting}).then(function(){
+					alert('success!');
+				});
+
+			};
+
+			$http.get('/greetings').then(function(response) {
+				$scope.greetings = response.data;
+			})
+		});
+
+	</script>
+</head>
+<body ng-controller="MittensCtrl">         <!-- The next step: set up the controller-->
+	<h1 class="page-title">Mittens</h1>
+	<div class="row feed">
+		<div class="col-md-4">
+			<h4>Login:</h4>
+			<br><br>
+			<input type="text" size="30" placeholder="Username">
+
+			<br><br>
+			<input type="Password" size="30" placeholder="Password">
+		</div>
+
+		<div class="col-md-8">
+			<div class="new-greeting">
+				<input type="text" class="form-control" ng-model="newGreeting" placeholder="What do you want to say?">
+				<br>
+				<button type="button" class="btn" ng-click="submitnewGreeting()">Submit</button>
+			</div>
+			<h3 ng-repeat="greeting in greetings">
+				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+				{{ greeting }}
+			</h3>
+
+		</div>
+	</div>
+</body>
+</html>
