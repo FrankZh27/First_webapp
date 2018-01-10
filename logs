@@ -1,1 +1,2 @@
 I used Mongodb 3.4, the syntex of connect to db from Nodejs is different from the version 2.x.
+[ref] https://stackoverflow.com/questions/47662220/db-collection-is-not-a-function-when-using-mongoclient-v3-0?rq=1
