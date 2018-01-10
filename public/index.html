@@ -12,14 +12,21 @@
 
 			$scope.submitnewGreeting = function() {
 				$http.post('/greetings',{newGreeting: $scope.newGreeting}).then(function(){
-					alert('success!');
+					getGreetings();
+					$scope.newGreeting = '';
 				});
 
 			};
 
-			$http.get('/greetings').then(function(response) {
-				$scope.greetings = response.data;
-			})
+
+			function getGreetings() {
+				$http.get('/greetings').then(function(response) {
+					$scope.greetings = response.data;
+				});
+			}
+
+			getGreetings();
+			
 		});
 
 	</script>
@@ -44,7 +51,7 @@
 			</div>
 			<h3 ng-repeat="greeting in greetings">
 				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-				{{ greeting }}
+				{{ greeting.text }}
 			</h3>
 
 		</div>
