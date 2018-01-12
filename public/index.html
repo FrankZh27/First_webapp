@@ -5,10 +5,33 @@
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript" src="angular-route.js"></script>
 	<script type="text/javascript">
-		var app = angular.module('mittens', []); 
+		// ngRoute is a dependency of this app
+		var app = angular.module('mittens', ['ngRoute']);
 
-		app.controller('MittensCtrl', function($scope, $http) {
+		app.config(function($routeProvider, $locationProvider) {
+			$routeProvider
+			.when('/', {
+				templateUrl: 'home.html',
+				controller: 'HomeController',
+    		})
+    		.when('/signup', {
+				templateUrl: 'signup.html',
+				controller: 'SignupController',
+    		})
+  		});
+
+		app.controller('HomeController', function($scope, $http) {
+
+			$scope.signin = function() {
+				$http.put('/users/signin', {username: $scope.username, password: $scope.password})
+					.then(function() {
+						alert('Successfully signed in!');
+					}, function(err) {
+						alert('username and password do not match!');
+					});
+			}
 
 			$scope.submitnewGreeting = function() {
 				$http.post('/greetings',{newGreeting: $scope.newGreeting}).then(function(){
@@ -17,6 +40,12 @@
 				});
 
 			};
+
+			$scope.removeGreeting = function(deletethisgreeting) {
+				$http.put('/greetings/remove',{greeting: deletethisgreeting}).then(function(){
+					getGreetings();
+				});
+			}
 
 
 			function getGreetings() {
@@ -29,32 +58,23 @@
 			
 		});
 
+		app.controller('SignupController', function($scope, $http) {
+			$scope.submitSignup = function() {
+				var newUser = {
+					username: $scope.username,
+					password: $scope.password
+				};
+
+				$http.post('/Users', newUser).then(function(){
+					alert('success');
+				});
+			}
+		});
+
 	</script>
 </head>
-<body ng-controller="MittensCtrl">         <!-- The next step: set up the controller-->
-	<h1 class="page-title">Mittens</h1>
-	<div class="row feed">
-		<div class="col-md-4">
-			<h4>Login:</h4>
-			<br><br>
-			<input type="text" size="30" placeholder="Username">
-
-			<br><br>
-			<input type="Password" size="30" placeholder="Password">
-		</div>
-
-		<div class="col-md-8">
-			<div class="new-greeting">
-				<input type="text" class="form-control" ng-model="newGreeting" placeholder="What do you want to say?">
-				<br>
-				<button type="button" class="btn" ng-click="submitnewGreeting()">Submit</button>
-			</div>
-			<h3 ng-repeat="greeting in greetings">
-				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-				{{ greeting.text }}
-			</h3>
-
-		</div>
-	</div>
+<body>         <!-- The next step: set up the controller-->
+	<h1 class="page-title"><a href="#!/">Mittens</a></h1>
+	<div ng-view></div>
 </body>
 </html>
