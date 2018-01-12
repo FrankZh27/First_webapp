@@ -3,3 +3,7 @@ I used Mongodb 3.4, the syntex of connect to db from Nodejs is different from th
 
 bcrypt is used to encrypt & decrpt the password on the server for security.
 jwt(Json web token) is used to keep we loging in.
+
+angular-route, angular cookies
+
+To associate a greeting with a specific user, we use post with headers(the third argument in http.post)
