@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html ng-app="mittens">                  <!--The first step: initialize the angular-->
 <head>
-	<title>Mittens</title>
+	<title>Poster</title>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="angular.min.js"></script>
 	<script type="text/javascript" src="angular-route.js"></script>
+	<script type="text/javascript" src="angular-cookies.js"></script>
 	<script type="text/javascript">
 		// ngRoute is a dependency of this app
-		var app = angular.module('mittens', ['ngRoute']);
+		var app = angular.module('mittens', ['ngRoute', 'ngCookies']);
 
 		app.config(function($routeProvider, $locationProvider) {
 			$routeProvider
@@ -22,19 +23,39 @@
     		})
   		});
 
-		app.controller('HomeController', function($scope, $http) {
+  		app.run(function($rootScope, $cookies) {
+  			if ($cookies.get('token') && $cookies.get('currentUser')) {
+  				$rootScope.token = $cookies.get('token');
+  				$rootScope.currentUser = $cookies.get('currentUser');
+  			}
+  		});
+
+		app.controller('HomeController', function($rootScope, $scope, $http, $cookies) {
 
 			$scope.signin = function() {
 				$http.put('/users/signin', {username: $scope.username, password: $scope.password})
-					.then(function() {
+					.then(function(res) {
+						$cookies.put('token', res.data.token);
+						$cookies.put('currentUser', $scope.username);
+						$rootScope.token = res.data.token;
+						$rootScope.currentUser = $scope.username;
 						alert('Successfully signed in!');
 					}, function(err) {
 						alert('username and password do not match!');
 					});
 			}
 
+			$scope.logout = function() {
+				$cookies.remove('token');
+				$cookies.remove('currentUser');
+				$rootScope.token = null;
+				$rootScope.currentUser = null;
+			}
+
 			$scope.submitnewGreeting = function() {
-				$http.post('/greetings',{newGreeting: $scope.newGreeting}).then(function(){
+				$http.post('/greetings',
+							{newGreeting: $scope.newGreeting},
+							{headers: {'authorization': $rootScope.token}}).then(function(){
 					getGreetings();
 					$scope.newGreeting = '';
 				});
@@ -42,7 +63,9 @@
 			};
 
 			$scope.removeGreeting = function(deletethisgreeting) {
-				$http.put('/greetings/remove',{greeting: deletethisgreeting}).then(function(){
+				$http.put('/greetings/remove',
+							{greeting: deletethisgreeting},
+							{headers: {'authorization': $rootScope.token}}).then(function(){
 					getGreetings();
 				});
 			}
@@ -74,7 +97,7 @@
 	</script>
 </head>
 <body>         <!-- The next step: set up the controller-->
-	<h1 class="page-title"><a href="#!/">Mittens</a></h1>
+	<h1 class="page-title"><a href="#!/">Poster</a></h1>
 	<div ng-view></div>
 </body>
 </html>

@@ -1,27 +1,37 @@
 <div class="row feed">
 	<div class="col-md-4">
-		<h4>Login:</h4>
-		<br><br>
-		<input type="text" size="30" placeholder="Username" ng-model="username">
-		<br><br>
-		<input type="Password" size="30" placeholder="Password" ng-model="password">
-		<br><br>
-		<button type="button" ng-click="signin()">Sign In</button>
-		<br><br>
-		<a href="#!/signup">Not a member? Sign up here!</a>
-	</div>
-
-	<div class="col-md-8">
-		<div class="new-greeting">
-			<input type="text" class="form-control" ng-model="newGreeting" placeholder="What do you want to say?">
-			<br>
-			<button type="button" class="btn" ng-click="submitnewGreeting()">Submit</button>
+		<div ng-hide="currentUser">
+			<h4>Login:</h4>
+			<br><br>
+			<input type="text" size="30" placeholder="Username" ng-model="username">
+			<br><br>
+			<input type="Password" size="30" placeholder="Password" ng-model="password">
+			<br><br>
+			<button type="button" ng-click="signin()">Sign In</button>
+			<br><br>
+			<a href="#!/signup">Not a member? Sign up here!</a>
 		</div>
-		<h3 ng-repeat="greeting in greetings">
-			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-			{{ greeting.text }}
-			<a href ng-click="removeGreeting(greeting)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
-		</h3>
-
+		<div ng-show="currentUser">
+			<h2>Hello, {{currentUser}}!<h2>
+			<br><br>
+			<a href ng-click="logout()"><h4>Log out</h4></a>
+		</div>
 	</div>
+
+		
+		<div class="col-md-8">
+			<div class="new-greeting" ng-show="currentUser">
+				<input type="text" class="form-control" ng-model="newGreeting" placeholder="What do you want to say?">
+				<br>
+				<button type="button" class="btn" ng-click="submitnewGreeting()">Submit</button>
+			</div>
+			<h3 ng-repeat="greeting in greetings">
+				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+				{{ greeting.text }}
+				<a href ng-click="removeGreeting(greeting)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+				<br>
+				<small>  {{greeting.username}}</small>
+			</h3>
+
+		</div>
 </div>
